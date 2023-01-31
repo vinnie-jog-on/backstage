@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: helloall-catalog-config
+  description: helloall.com-catalog-config
+  annotations:
+    github.com/project-slug: vinnie-jog-on/helloall
+    jira/project-key: ENISDT
+  links:
+    - url: https://tracker.intive.com/jira/secure/RapidBoard.jspa
+      title: backlog
+      icon: dashboard
+spec:
+  type: website
+  lifecycle: production
+  owner: user:guests
