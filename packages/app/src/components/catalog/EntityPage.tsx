@@ -156,6 +156,10 @@ import {
   ReportIssue,
 } from '@backstage/plugin-techdocs-module-addons-contrib';
 import { EntityCostInsightsContent } from '@backstage/plugin-cost-insights';
+import {
+  EntityJiraOverviewCard,
+  isJiraAvailable,
+} from '@roadiehq/backstage-plugin-jira';
 
 const customEntityFilterKind = ['Component', 'API', 'System'];
 
@@ -341,7 +345,15 @@ const overviewContent = (
     <Grid item md={6} xs={12}>
       <EntityAboutCard variant="gridItem" />
     </Grid>
-
+    <Grid container spacing={3} alignItems="stretch">
+      <EntitySwitch>
+        <EntitySwitch.Case if={isJiraAvailable}>
+          <Grid item md={6}>
+            <EntityJiraOverviewCard />
+          </Grid>
+        </EntitySwitch.Case>
+      </EntitySwitch>
+    </Grid>
     <Grid item md={6} xs={12}>
       <EntityCatalogGraphCard variant="gridItem" height={400} />
     </Grid>

@@ -40,9 +40,15 @@ backend:
     methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
     credentials: true
   csp:
-    connect-src: ["'self'", 'http:', 'https:']
+    # connect-src: ["'self'", 'http:', 'https:', 'data:', 'JIRA_URL']
     # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
     # Default Helmet Content-Security-Policy values can be removed by setting the key to false
+    # "'self'" and 'data' are from the backstage default but must be set since img-src is overriden
+    img-src:
+      - "'self'"
+      - 'data:'
+      # Allow your Jira instance for @roadiehq/backstage-plugin-jira
+      - 'JIRA_URL'
   reading:
     allow:
       - host: example.com
@@ -55,6 +61,23 @@ proxy:
     target: https://circleci.com/api/v1.1
     headers:
       Circle-Token: ${CIRCLECI_AUTH_TOKEN}
+
+  '/jira/api':
+    target: https://tracker.intive.com/jira
+    headers:
+      Authorization: # ${JIRA_TOKEN}
+        $env: JIRA_TOKEN
+      Accept: 'application/json'
+      Content-Type: 'application/json'
+      X-Atlassian-Token: 'nocheck'
+      User-Agent: "MY-UA-STRING"
+    jira:
+      # Defaults to /jira/api and can be omitted if proxy is configured for that url
+      proxyPath: /jira/api
+      # Add it in case your JIRA instance is connected to Confluence, in order to filter those activities
+      confluenceActivityFilter: wiki@uuid
+      # Defaults to latest and can be omitted if you want to use the latest version of the api
+      apiVersion: latest
 
   '/jenkins/api':
     target: http://localhost:8080
@@ -117,6 +140,7 @@ proxy:
     target: https://your.dynatrace.instance.com/api/v2
     headers:
       Authorization: 'Api-Token ${DYNATRACE_ACCESS_TOKEN}'
+
 
 organization:
   name: My Company
