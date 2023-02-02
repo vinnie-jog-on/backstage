@@ -19,3 +19,5 @@ spec:
     - ./components/wayback-archive-storage-component.yaml
     - ./components/wayback-search-component.yaml
     - ./components/hello-all.yaml
+    - ./components/openstack-component.yaml
+
