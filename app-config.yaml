@@ -172,6 +172,13 @@ allure:
   baseUrl: http://localhost:5050/allure-docker-service
 
 integrations:
+  # gerrit:
+  #   - host: localhost:8080
+  #     baseUrl: http://localhost:8080/q/status:open+-is:wip
+  #     # cloneUrl: https://gerrit.company.com/clone
+  #     # gitilesBaseUrl: https://gerrit.company.com/gitiles
+  #     username: "admin"
+  #     password: "665hPsd1hI0+ChQU/Zu9Vc8LC5UA7vA8PDTu0xE+yg"
   github:
     - host: github.com
       token: ${GITHUB_TOKEN}

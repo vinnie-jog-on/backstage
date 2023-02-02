@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: openstack
+  description: openstack-catalog-config
+  annotations:
+    github.com/project-slug: openstack/openstack
+  links:
+    - url: https://github.com/openstack/openstack
+      title: openstack-on-github
+      icon: dashboard
+spec:
+  type: website
+  lifecycle: production
+  owner: user:guests

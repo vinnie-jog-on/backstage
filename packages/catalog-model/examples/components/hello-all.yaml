@@ -1,8 +1,8 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: helloall-catalog-config
-  description: helloall.com-catalog-config
+  name: helloall
+  description: "helloall test repo"
   annotations:
     github.com/project-slug: vinnie-jog-on/helloall
     jira/project-key: ENISDT
