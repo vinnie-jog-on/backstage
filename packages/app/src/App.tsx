@@ -107,6 +107,7 @@ import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common'
 import { PlaylistIndexPage } from '@backstage/plugin-playlist';
 import { TwoColumnLayout } from './components/scaffolder/customScaffolderLayouts';
 import { ScoreBoardPage } from '@oriflame/backstage-plugin-score-card';
+import { Gerrit4Page } from '@backstage/plugin-gerrit4';
 
 const app = createApp({
   apis,
@@ -279,6 +280,7 @@ const routes = (
     <Route path="/apache-airflow" element={<ApacheAirflowPage />} />
     <Route path="/playlist" element={<PlaylistIndexPage />} />
     <Route path="/score-board" element={<ScoreBoardPage />} />
+    <Route path="/gerrit4" element={<Gerrit4Page />} />
   </FlatRoutes>
 );
 

@@ -49,12 +49,15 @@
   "version": "1.11.0-next.0",
   "dependencies": {
     "@backstage/errors": "workspace:^",
-    "@manypkg/get-packages": "^1.1.3"
+    "@manypkg/get-packages": "^1.1.3",
+    "package.json": "^2.0.1",
+    "yarn.lock": "^0.0.1-security"
   },
   "devDependencies": {
     "@backstage/cli": "workspace:*",
     "@backstage/codemods": "workspace:*",
     "@backstage/create-app": "workspace:*",
+    "@backstage/plugin-gerrit1": "workspace:*",
     "@backstage/repo-tools": "workspace:*",
     "@changesets/cli": "^2.14.0",
     "@octokit/rest": "^19.0.3",

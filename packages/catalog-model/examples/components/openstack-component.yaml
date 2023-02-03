@@ -13,3 +13,5 @@ spec:
   type: website
   lifecycle: production
   owner: user:guests
+  providesApis:
+    - wayback-search

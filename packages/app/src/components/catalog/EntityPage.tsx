@@ -93,7 +93,7 @@ import { EntityKafkaContent } from '@backstage/plugin-kafka';
 import { EntityKubernetesContent } from '@backstage/plugin-kubernetes';
 import {
   EntityLastLighthouseAuditCard,
-  EntityLighthouseContent,
+  // EntityLighthouseContent,
   isLighthouseAvailable,
 } from '@backstage/plugin-lighthouse';
 import {
@@ -160,6 +160,7 @@ import {
   EntityJiraOverviewCard,
   isJiraAvailable,
 } from '@roadiehq/backstage-plugin-jira';
+import { Gerrit2Page } from '@backstage/plugin-gerrit2';
 
 const customEntityFilterKind = ['Component', 'API', 'System'];
 
@@ -339,21 +340,21 @@ const pullRequestsContent = (
   </EntitySwitch>
 );
 
+const gerritContent = (
+  <EntitySwitch>
+    <EntitySwitch.Case if={isAzureDevOpsAvailable}>
+      <Gerrit2Page />
+    </EntitySwitch.Case>
+  </EntitySwitch>
+);
+
 const overviewContent = (
   <Grid container spacing={3} alignItems="stretch">
     {entityWarningContent}
     <Grid item md={6} xs={12}>
       <EntityAboutCard variant="gridItem" />
     </Grid>
-    <Grid container spacing={3} alignItems="stretch">
-      <EntitySwitch>
-        <EntitySwitch.Case if={isJiraAvailable}>
-          <Grid item md={6}>
-            <EntityJiraOverviewCard />
-          </Grid>
-        </EntitySwitch.Case>
-      </EntitySwitch>
-    </Grid>
+
     <Grid item md={6} xs={12}>
       <EntityCatalogGraphCard variant="gridItem" height={400} />
     </Grid>
@@ -377,7 +378,15 @@ const overviewContent = (
     <Grid item md={4} xs={12}>
       <EntityLinksCard />
     </Grid>
-
+    <Grid container spacing={3} alignItems="stretch">
+      <EntitySwitch>
+        <EntitySwitch.Case if={isJiraAvailable}>
+          <Grid item md={6}>
+            <EntityJiraOverviewCard />
+          </Grid>
+        </EntitySwitch.Case>
+      </EntitySwitch>
+    </Grid>
     <EntitySwitch>
       <EntitySwitch.Case if={hasLabels}>
         <Grid item md={4} xs={12}>
@@ -536,13 +545,13 @@ const websiteEntityPage = (
       {cicdContent}
     </EntityLayout.Route>
 
-    <EntityLayout.Route path="/lighthouse" title="Lighthouse">
+    {/* <EntityLayout.Route path="/lighthouse" title="Lighthouse">
       <EntityLighthouseContent />
     </EntityLayout.Route>
 
     <EntityLayout.Route path="/errors" title="Errors">
       {errorsContent}
-    </EntityLayout.Route>
+    </EntityLayout.Route> */}
 
     <EntityLayout.Route path="/dependencies" title="Dependencies">
       <Grid container spacing={3} alignItems="stretch">
@@ -587,8 +596,12 @@ const websiteEntityPage = (
       <EntityAzureGitTagsContent />
     </EntityLayout.Route>
 
-    <EntityLayout.Route path="/pull-requests" title="Pull Requests">
+    {/* <EntityLayout.Route path="/pull-requests" title="Pull Requests">
       {pullRequestsContent}
+    </EntityLayout.Route> */}
+
+    <EntityLayout.Route path="/pull-requests" title="Gerrit">
+      {gerritContent}
     </EntityLayout.Route>
 
     <EntityLayout.Route path="/code-insights" title="Code Insights">

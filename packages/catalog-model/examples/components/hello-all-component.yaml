@@ -1,0 +1,26 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: hello-all
+  description: "helloall local import"
+  annotations:
+    github.com/project-slug: vinnie-jog-on/helloall
+    jira/project-key: ENISDT
+    jira/token-type: Bearer
+  links:
+    - url: https://tracker.intive.com/jira/secure/RapidBoard.jspa
+      title: backlog
+      icon: dashboard
+    - url: https://github.com/vinnie-jog-on/helloall
+      title: source code
+      icon: github
+spec:
+  type: website
+  lifecycle: production
+  owner: user:vinnie
+  system: artist-engagement-portal
+  consumesApis: ['component:artist-lookup']
+  dependsOn: ['resource:artists-db']
+  providesApis:
+    - wayback-search
+  subcomponentOf: shuffle-api

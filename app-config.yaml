@@ -39,12 +39,13 @@ backend:
     origin: http://localhost:3000
     methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
     credentials: true
-  csp:
     # connect-src: ["'self'", 'http:', 'https:', 'data:', 'JIRA_URL']
     # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
     # Default Helmet Content-Security-Policy values can be removed by setting the key to false
     # "'self'" and 'data' are from the backstage default but must be set since img-src is overriden
+  csp:
     img-src:
+      # "'self'" and 'data' are from the backstage default but must be set since img-src is overriden
       - "'self'"
       - 'data:'
       # Allow your Jira instance for @roadiehq/backstage-plugin-jira
@@ -65,19 +66,13 @@ proxy:
   '/jira/api':
     target: https://tracker.intive.com/jira
     headers:
-      Authorization: # ${JIRA_TOKEN}
+      Authorization:
         $env: JIRA_TOKEN
       Accept: 'application/json'
       Content-Type: 'application/json'
-      X-Atlassian-Token: 'nocheck'
-      User-Agent: "MY-UA-STRING"
-    jira:
-      # Defaults to /jira/api and can be omitted if proxy is configured for that url
-      proxyPath: /jira/api
-      # Add it in case your JIRA instance is connected to Confluence, in order to filter those activities
-      confluenceActivityFilter: wiki@uuid
-      # Defaults to latest and can be omitted if you want to use the latest version of the api
-      apiVersion: latest
+      X-Atlassian-Token: 'no-check'
+      # This is a workaround since Jira APIs reject browser origin requests. Any dummy string without whitespace works.
+      User-Agent: "AnyRandomString"
 
   '/jenkins/api':
     target: http://localhost:8080
@@ -141,6 +136,13 @@ proxy:
     headers:
       Authorization: 'Api-Token ${DYNATRACE_ACCESS_TOKEN}'
 
+jira:
+  # Defaults to /jira/api and can be omitted if proxy is configured for that url
+  proxyPath: /jira/api
+  # Add it in case your JIRA instance is connected to Confluence, in order to filter those activities
+  confluenceActivityFilter: "wiki@3f369d40-6bb2-3f93-93f1-49d23c17342e"
+  # Defaults to latest and can be omitted if you want to use the latest version of the api
+  apiVersion: latest
 
 organization:
   name: My Company
