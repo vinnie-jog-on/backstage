@@ -38,7 +38,9 @@ backend:
   cors:
     origin: http://localhost:3000
     methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
-    credentials: true
+    # credentials: true
+    # Access-Control-Allow-Origin: "*"
+
     # connect-src: ["'self'", 'http:', 'https:', 'data:', 'JIRA_URL']
     # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
     # Default Helmet Content-Security-Policy values can be removed by setting the key to false
@@ -54,6 +56,7 @@ backend:
     allow:
       - host: example.com
       - host: '*.mozilla.org'
+      - host: http://localhost:8080/
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
 # See README.md in the proxy-backend plugin for information on the configuration format
@@ -63,21 +66,31 @@ proxy:
     headers:
       Circle-Token: ${CIRCLECI_AUTH_TOKEN}
 
-  '/jira/api':
-    target: https://tracker.intive.com/jira
-    headers:
-      Authorization:
-        $env: JIRA_TOKEN
-      Accept: 'application/json'
-      Content-Type: 'application/json'
-      X-Atlassian-Token: 'no-check'
-      # This is a workaround since Jira APIs reject browser origin requests. Any dummy string without whitespace works.
-      User-Agent: "AnyRandomString"
+  # '/jira/api':
+  #   target: https://tracker.intive.com/jira
+  #   headers:
+  #     Authorization:
+  #       $env: JIRA_TOKEN
+  #     Accept: 'application/json'
+  #     Content-Type: 'application/json'
+  #     X-Atlassian-Token: 'no-check'
+  #     # This is a workaround since Jira APIs reject browser origin requests. Any dummy string without whitespace works.
+  #     User-Agent: "AnyRandomString"
 
-  '/jenkins/api':
+  # '/jenkins/api':
+  #   target: http://localhost:8080/
+  #   headers:
+  #     Authorization: ${JENKINS_BASIC_AUTH_HEADER}
+  '/gerrit':
     target: http://localhost:8080
     headers:
-      Authorization: ${JENKINS_BASIC_AUTH_HEADER}
+      Authorization: '665hPsd1hI0+ChQU/Zu9Vc8LC5UA7vA8PDTu0xE+yg'
+      #   Access-Control-Allow-Origin: "*"
+      # baseUrl: http://localhost:8080/q/status:open+-is:wip
+      # cloneUrl: https://gerrit.company.com/clone
+      # gitilesBaseUrl: https://gerrit.company.com/gitiles
+      # username: "admin"
+      # password: "665hPsd1hI0+ChQU/Zu9Vc8LC5UA7vA8PDTu0xE+yg"
 
   '/travisci/api':
     target: https://api.travis-ci.com
@@ -136,13 +149,13 @@ proxy:
     headers:
       Authorization: 'Api-Token ${DYNATRACE_ACCESS_TOKEN}'
 
-jira:
-  # Defaults to /jira/api and can be omitted if proxy is configured for that url
-  proxyPath: /jira/api
-  # Add it in case your JIRA instance is connected to Confluence, in order to filter those activities
-  confluenceActivityFilter: "wiki@3f369d40-6bb2-3f93-93f1-49d23c17342e"
-  # Defaults to latest and can be omitted if you want to use the latest version of the api
-  apiVersion: latest
+# jira:
+#   # Defaults to /jira/api and can be omitted if proxy is configured for that url
+#   proxyPath: /jira/api
+#   # Add it in case your JIRA instance is connected to Confluence, in order to filter those activities
+#   confluenceActivityFilter: "wiki@3f369d40-6bb2-3f93-93f1-49d23c17342e"
+#   # Defaults to latest and can be omitted if you want to use the latest version of the api
+#   apiVersion: latest
 
 organization:
   name: My Company
@@ -198,13 +211,13 @@ allure:
   baseUrl: http://localhost:5050/allure-docker-service
 
 integrations:
-  # gerrit:
-  #   - host: localhost:8080
-  #     baseUrl: http://localhost:8080/q/status:open+-is:wip
-  #     # cloneUrl: https://gerrit.company.com/clone
-  #     # gitilesBaseUrl: https://gerrit.company.com/gitiles
-  #     username: "admin"
-  #     password: "665hPsd1hI0+ChQU/Zu9Vc8LC5UA7vA8PDTu0xE+yg"
+  gerrit:
+    - host: localhost:8080
+      baseUrl: http://localhost:8080/q/status:open+-is:wip
+      cloneUrl: https://gerrit.company.com/clone
+      gitilesBaseUrl: https://gerrit.company.com/gitiles
+      username: "admin"
+      password: "665hPsd1hI0+ChQU/Zu9Vc8LC5UA7vA8PDTu0xE+yg"
   github:
     - host: github.com
       token: ${GITHUB_TOKEN}

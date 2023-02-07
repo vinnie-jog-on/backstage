@@ -18,6 +18,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Table, TableColumn, Progress } from '@backstage/core-components';
 import Alert from '@material-ui/lab/Alert';
 import useAsync from 'react-use/lib/useAsync';
+// import { Config } from '@backstage/config';
 
 const useStyles = makeStyles({
   avatar: {
@@ -88,9 +89,16 @@ export const DenseTable = ({ users }: DenseTableProps) => {
   );
 };
 
+// export const ExampleFetchComponent = () => {
+//   return axios.get("https://randomuser.me/api/")
+//     .then((response) => console.log(response.data));}
+
 export const ExampleFetchComponent = () => {
+  // const backendUrl = config.getString('backend.baseUrl')
   const { value, loading, error } = useAsync(async (): Promise<User[]> => {
-    const response = await fetch('https://randomuser.me/api/?results=20');
+    const response = await fetch(`api/proxy/gerrit/projects/repo1`, {
+      headers: {},
+    });
     const data = await response.json();
     return data.results;
   }, []);

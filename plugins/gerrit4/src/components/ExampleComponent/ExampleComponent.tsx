@@ -23,8 +23,46 @@ import {
   ContentHeader,
   HeaderLabel,
   SupportButton,
+  Progress,
 } from '@backstage/core-components';
-import { ExampleFetchComponent } from '../ExampleFetchComponent';
+// import { ExampleFetchComponent } from '../ExampleFetchComponent';
+import { discoveryApiRef, useApi } from '@backstage/core-plugin-api';
+import { useAsync } from 'react-use';
+import { Alert } from '@material-ui/lab';
+
+const GerritProxyComponent = () => {
+  const discoveryApi = useApi(discoveryApiRef);
+  const proxyBackendBaseUrl = discoveryApi.getBaseUrl('proxy');
+
+  const { value, loading, error } = useAsync(async () => {
+    // console.log("good to be at step 1")
+    const response = await fetch(
+      `${await proxyBackendBaseUrl}/gerrit/projects/repo1`,
+    );
+    // console.log(response)
+    //  console.log("step 2 " + response.body)
+    //  const jsonResponseBody = response.body;
+    //  let data = '';
+    //  jsonResponseBody.on('data', chunk => {
+    //     data += chunk;
+    //   });
+    //   jsonResponseBody.on('end', () => {
+    //   const string = data.toString('utf8');
+    //   console.log(jsonResponseBody);
+    // });
+    //  const strippedJsonResponseBody = jsonResponseBody.replace(/^MagicPrefix\s*/, '');
+    // //console.log(response.json())
+    const data = await response.json();
+    return data;
+  }, []);
+  if (loading) {
+    return <Progress />;
+  } else if (error) {
+    return <Alert severity="error">{error.message}</Alert>;
+  }
+
+  return <div>HELLO V</div>;
+};
 
 export const ExampleComponent = () => (
   <Page themeId="tool">
@@ -45,7 +83,7 @@ export const ExampleComponent = () => (
           </InfoCard>
         </Grid>
         <Grid item>
-          <ExampleFetchComponent />
+          <GerritProxyComponent />
         </Grid>
       </Grid>
     </Content>

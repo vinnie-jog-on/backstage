@@ -160,7 +160,6 @@ import {
   EntityJiraOverviewCard,
   isJiraAvailable,
 } from '@roadiehq/backstage-plugin-jira';
-import { Gerrit2Page } from '@backstage/plugin-gerrit2';
 
 const customEntityFilterKind = ['Component', 'API', 'System'];
 
@@ -340,13 +339,13 @@ const pullRequestsContent = (
   </EntitySwitch>
 );
 
-const gerritContent = (
-  <EntitySwitch>
-    <EntitySwitch.Case if={isAzureDevOpsAvailable}>
-      <Gerrit2Page />
-    </EntitySwitch.Case>
-  </EntitySwitch>
-);
+// const gerritContent = (
+//   <EntitySwitch>
+//     <EntitySwitch.Case if={isAzureDevOpsAvailable}>
+//       <Gerrit2Page />
+//     </EntitySwitch.Case>
+//   </EntitySwitch>
+// );
 
 const overviewContent = (
   <Grid container spacing={3} alignItems="stretch">
@@ -599,10 +598,10 @@ const websiteEntityPage = (
     {/* <EntityLayout.Route path="/pull-requests" title="Pull Requests">
       {pullRequestsContent}
     </EntityLayout.Route> */}
-
+    {/* 
     <EntityLayout.Route path="/pull-requests" title="Gerrit">
       {gerritContent}
-    </EntityLayout.Route>
+    </EntityLayout.Route> */}
 
     <EntityLayout.Route path="/code-insights" title="Code Insights">
       <EntityGithubInsightsContent />
