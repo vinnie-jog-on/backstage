@@ -29,6 +29,14 @@ import {
 import { discoveryApiRef, useApi } from '@backstage/core-plugin-api';
 import { useAsync } from 'react-use';
 import { Alert } from '@material-ui/lab';
+import {
+  GerritIntegration,
+  getGerritProjectsApiUrl,
+  getGerritRequestOptions,
+  parseGerritJsonResponse,
+  ScmIntegrations,
+} from '@backstage/integration';
+import { GerritProjectQueryResult, GerritProviderConfig } from './types';
 
 const GerritProxyComponent = () => {
   const discoveryApi = useApi(discoveryApiRef);
@@ -39,20 +47,18 @@ const GerritProxyComponent = () => {
     const response = await fetch(
       `${await proxyBackendBaseUrl}/gerrit/projects/repo1`,
     );
-    // console.log(response)
-    //  console.log("step 2 " + response.body)
-    //  const jsonResponseBody = response.body;
-    //  let data = '';
-    //  jsonResponseBody.on('data', chunk => {
-    //     data += chunk;
-    //   });
-    //   jsonResponseBody.on('end', () => {
-    //   const string = data.toString('utf8');
-    //   console.log(jsonResponseBody);
-    // });
-    //  const strippedJsonResponseBody = jsonResponseBody.replace(/^MagicPrefix\s*/, '');
-    // //console.log(response.json())
-    const data = await response.json();
+    // .then(response => response.text()).then(string => console.log(string));
+    // console.log("good to be at step 2")
+    // const data = await response.text();
+    // console.log(data)
+    const gerritProjectsResponse = (await parseGerritJsonResponse(
+      response as any,
+    )) as GerritProjectQueryResult;
+    // console.log("good to be at step 3")
+    // console.log(gerritProjectsResponse)
+    // console.log("good to be at step 4")
+
+    const data = await gerritProjectsResponse;
     return data;
   }, []);
   if (loading) {
@@ -61,7 +67,7 @@ const GerritProxyComponent = () => {
     return <Alert severity="error">{error.message}</Alert>;
   }
 
-  return <div>HELLO V</div>;
+  return <div>Some date is {value.id}</div>;
 };
 
 export const ExampleComponent = () => (
