@@ -24,11 +24,15 @@ import {
   HeaderLabel,
   SupportButton,
   Progress,
+  Table,
+  TableColumn,
 } from '@backstage/core-components';
 // import { ExampleFetchComponent } from '../ExampleFetchComponent';
 import { discoveryApiRef, useApi } from '@backstage/core-plugin-api';
-import { useAsync } from 'react-use';
 import { Alert } from '@material-ui/lab';
+import { makeStyles } from '@material-ui/core/styles';
+import useAsync from 'react-use/lib/useAsync';
+
 import {
   GerritIntegration,
   getGerritProjectsApiUrl,
@@ -36,43 +40,72 @@ import {
   parseGerritJsonResponse,
   ScmIntegrations,
 } from '@backstage/integration';
-import { GerritProjectQueryResult, GerritProviderConfig } from './types';
+
+const useStyles = makeStyles({
+  avatar: {
+    height: 32,
+    width: 32,
+    borderRadius: '50%',
+  },
+});
+
+type Change = {
+  id: string;
+  project: string; // "duane.reed@example.com"
+};
+
+type DenseTableProps = {
+  changes: Change[];
+};
+
+export const DenseTable = ({ changes }: DenseTableProps) => {
+  const columns: TableColumn[] = [
+    { title: 'Id', field: 'id' },
+    { title: 'Project', field: 'project' },
+  ];
+
+  const data = changes.map(change => {
+    return {
+      id: change.id,
+      project: change.project,
+    };
+  });
+
+  return (
+    <Table
+      title="Example change List (fetching data from local gerrit)"
+      options={{ search: false, paging: false }}
+      columns={columns}
+      data={data}
+    />
+  );
+};
 
 const GerritProxyComponent = () => {
   const discoveryApi = useApi(discoveryApiRef);
   const proxyBackendBaseUrl = discoveryApi.getBaseUrl('proxy');
 
-  const { value, loading, error } = useAsync(async () => {
-    // console.log("good to be at step 1")
+  const { value, loading, error } = useAsync(async (): Promise<Change[]> => {
     const response = await fetch(
-      `${await proxyBackendBaseUrl}/gerrit/projects/repo1`,
+      `${await proxyBackendBaseUrl}/gerrit/changes/`,
     );
-    // .then(response => response.text()).then(string => console.log(string));
-    // console.log("good to be at step 2")
-    // const data = await response.text();
-    // console.log(data)
-    const gerritProjectsResponse = (await parseGerritJsonResponse(
-      response as any,
-    )) as GerritProjectQueryResult;
-    // console.log("good to be at step 3")
-    // console.log(gerritProjectsResponse)
-    // console.log("good to be at step 4")
+    const data = { results: await parseGerritJsonResponse(response as any) };
 
-    const data = await gerritProjectsResponse;
-    return data;
+    return data.results;
   }, []);
+
   if (loading) {
     return <Progress />;
   } else if (error) {
     return <Alert severity="error">{error.message}</Alert>;
   }
 
-  return <div>Some date is {value.id}</div>;
+  return <DenseTable changes={value || []} />;
 };
 
 export const ExampleComponent = () => (
   <Page themeId="tool">
-    <Header title="Welcome to gerrit4!" subtitle="Optional subtitle">
+    <Header title="Welcome to gerrit Page!" subtitle="Optional subtitle">
       <HeaderLabel label="Owner" value="Team X" />
       <HeaderLabel label="Lifecycle" value="Alpha" />
     </Header>
