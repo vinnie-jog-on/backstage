@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 import React from 'react';
-import { Typography, Grid } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import {
-  InfoCard,
   Header,
   Page,
   Content,
@@ -30,15 +29,11 @@ import {
 import { discoveryApiRef, useApi } from '@backstage/core-plugin-api';
 import { Alert } from '@material-ui/lab';
 import useAsync from 'react-use/lib/useAsync';
-import {
-  useEntity,
-  getEntitySourceLocation,
-} from '@backstage/plugin-catalog-react';
+import { useEntity } from '@backstage/plugin-catalog-react';
 import { parseGerritJsonResponse } from '@backstage/integration';
 
 type Change = {
   subject: string;
-  url: string;
   // owner: string;
   project: string;
   branch: string;
@@ -111,24 +106,24 @@ const GerritProxyComponent = () => {
   return <DenseTable changes={value || []} />;
 };
 
-export const ExampleComponent = () => (
+export const GerritComponent = () => (
   <Page themeId="tool">
     <Header title="Welcome to gerrit Page!" subtitle="Optional subtitle">
-      <HeaderLabel label="repoName" value="Jim" />
+      <HeaderLabel label="Repo Name" value="Alpha" url="https://google.com" />
       <HeaderLabel label="Lifecycle" value="Alpha" />
     </Header>
     <Content>
-      <ContentHeader title="Plugin title">
-        <SupportButton>A description of your plugin goes here.</SupportButton>
+      <ContentHeader title="Gerrit portal">
+        <SupportButton>Provides a link to gerrit changes.</SupportButton>
       </ContentHeader>
       <Grid container spacing={3} direction="column">
-        <Grid item>
+        {/* <Grid item>
           <InfoCard title="Information card">
             <Typography variant="body1">
-              All content should be wrapped in a card like this.
+              I really should add something here.
             </Typography>
           </InfoCard>
-        </Grid>
+        </Grid> */}
         <Grid item>
           <GerritProxyComponent />
         </Grid>

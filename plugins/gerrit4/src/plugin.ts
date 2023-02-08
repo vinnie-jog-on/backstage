@@ -31,7 +31,7 @@ export const Gerrit4Page = gerrit4Plugin.provide(
   createRoutableExtension({
     name: 'Gerrit4Page',
     component: () =>
-      import('./components/ExampleComponent').then(m => m.ExampleComponent),
+      import('./components/GerritComponent').then(m => m.GerritComponent),
     mountPoint: rootRouteRef,
   }),
 );
