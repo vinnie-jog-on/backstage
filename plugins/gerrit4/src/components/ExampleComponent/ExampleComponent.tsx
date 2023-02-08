@@ -32,6 +32,43 @@ import { discoveryApiRef, useApi } from '@backstage/core-plugin-api';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import useAsync from 'react-use/lib/useAsync';
+import {
+  Entity,
+  getEntitySourceLocation,
+  RELATION_OWNED_BY,
+  RELATION_PART_OF,
+} from '@backstage/catalog-model';
+import {
+  EntityRefLinks,
+  getEntityRelations,
+} from '@backstage/plugin-catalog-react';
+import { useEntity } from '@backstage/plugin-catalog-react';
+
+const useStyles = makeStyles({
+  avatar: {
+    height: 32,
+    width: 32,
+    borderRadius: '50%',
+  },
+  description: {
+    wordBreak: 'break-word',
+  },
+});
+
+/**
+ * Props for {@link GerritContent}.
+ *
+ * @public
+ */
+export interface GerritContentProps {
+  entity: Entity;
+}
+
+/** @public */
+export function AboutContent(props: GerritContentProps) {
+  const { entity } = useEntity();
+  const classes = useStyles();
+}
 
 import {
   GerritIntegration,
@@ -41,17 +78,10 @@ import {
   ScmIntegrations,
 } from '@backstage/integration';
 
-const useStyles = makeStyles({
-  avatar: {
-    height: 32,
-    width: 32,
-    borderRadius: '50%',
-  },
-});
-
 type Change = {
-  id: string;
-  project: string; // "duane.reed@example.com"
+  project: string;
+  branch: string;
+  change_id: string;
 };
 
 type DenseTableProps = {
@@ -60,14 +90,16 @@ type DenseTableProps = {
 
 export const DenseTable = ({ changes }: DenseTableProps) => {
   const columns: TableColumn[] = [
-    { title: 'Id', field: 'id' },
     { title: 'Project', field: 'project' },
+    { title: 'Branch', field: 'branch' },
+    { title: 'Change Id', field: 'change_id' },
   ];
 
   const data = changes.map(change => {
     return {
-      id: change.id,
       project: change.project,
+      branch: change.branch,
+      change_id: change.change_id,
     };
   });
 
@@ -84,13 +116,15 @@ export const DenseTable = ({ changes }: DenseTableProps) => {
 const GerritProxyComponent = () => {
   const discoveryApi = useApi(discoveryApiRef);
   const proxyBackendBaseUrl = discoveryApi.getBaseUrl('proxy');
+  const { entity } = useEntity();
+  const repoName = entity?.metadata?.name;
 
   const { value, loading, error } = useAsync(async (): Promise<Change[]> => {
     const response = await fetch(
-      `${await proxyBackendBaseUrl}/gerrit/changes/`,
+      `${await proxyBackendBaseUrl}/gerrit/changes/?q=project:${repoName}`,
     );
     const data = { results: await parseGerritJsonResponse(response as any) };
-
+    // console.log(entity?.metadata?.name)
     return data.results;
   }, []);
 
@@ -106,7 +140,7 @@ const GerritProxyComponent = () => {
 export const ExampleComponent = () => (
   <Page themeId="tool">
     <Header title="Welcome to gerrit Page!" subtitle="Optional subtitle">
-      <HeaderLabel label="Owner" value="Team X" />
+      <HeaderLabel label="Owner" value="Jim" />
       <HeaderLabel label="Lifecycle" value="Alpha" />
     </Header>
     <Content>

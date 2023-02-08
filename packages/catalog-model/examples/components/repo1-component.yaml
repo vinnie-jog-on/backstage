@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: repo1
+  description: "repo1 is a local gerrit repo"
+  annotations:
+    backstage.io/managed-by-location: http://localhost:8080/admin/repos/repo1
+  links:
+    - url: http://localhost:8080/q/project:repo1
+      title: changes
+      icon: github
+    - url: http://localhost:8080/admin/repos/repo1,general
+      title: repo1 general
+      icon: github
+spec:
+  type: website
+  lifecycle: production
+  owner: user:vinnie
+  system: artist-engagement-portal
+  consumesApis: ['component:artist-lookup']
+  dependsOn: ['resource:artists-db']
+  providesApis:
+    - wayback-search
+  subcomponentOf: shuffle-api

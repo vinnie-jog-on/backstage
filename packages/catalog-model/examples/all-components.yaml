@@ -20,4 +20,6 @@ spec:
     # - ./components/wayback-search-component.yaml
     - ./components/hello-all-component.yaml
     - ./components/openstack-component.yaml
+    - ./components/repo1-component.yaml
+    - ./components/repo2-component.yaml
 
