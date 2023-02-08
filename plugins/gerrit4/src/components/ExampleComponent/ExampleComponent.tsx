@@ -27,60 +27,23 @@ import {
   Table,
   TableColumn,
 } from '@backstage/core-components';
-// import { ExampleFetchComponent } from '../ExampleFetchComponent';
 import { discoveryApiRef, useApi } from '@backstage/core-plugin-api';
 import { Alert } from '@material-ui/lab';
-import { makeStyles } from '@material-ui/core/styles';
 import useAsync from 'react-use/lib/useAsync';
 import {
-  Entity,
+  useEntity,
   getEntitySourceLocation,
-  RELATION_OWNED_BY,
-  RELATION_PART_OF,
-} from '@backstage/catalog-model';
-import {
-  EntityRefLinks,
-  getEntityRelations,
 } from '@backstage/plugin-catalog-react';
-import { useEntity } from '@backstage/plugin-catalog-react';
-
-const useStyles = makeStyles({
-  avatar: {
-    height: 32,
-    width: 32,
-    borderRadius: '50%',
-  },
-  description: {
-    wordBreak: 'break-word',
-  },
-});
-
-/**
- * Props for {@link GerritContent}.
- *
- * @public
- */
-export interface GerritContentProps {
-  entity: Entity;
-}
-
-/** @public */
-export function AboutContent(props: GerritContentProps) {
-  const { entity } = useEntity();
-  const classes = useStyles();
-}
-
-import {
-  GerritIntegration,
-  getGerritProjectsApiUrl,
-  getGerritRequestOptions,
-  parseGerritJsonResponse,
-  ScmIntegrations,
-} from '@backstage/integration';
+import { parseGerritJsonResponse } from '@backstage/integration';
 
 type Change = {
+  subject: string;
+  url: string;
+  // owner: string;
   project: string;
   branch: string;
+  updated: string;
+  status: string;
   change_id: string;
 };
 
@@ -88,17 +51,30 @@ type DenseTableProps = {
   changes: Change[];
 };
 
+// const { entity } = useEntity();
+// const repoName = entity?.metadata?.name;
+// , url: "http://localhost:8080/c/repo1/+/42"
 export const DenseTable = ({ changes }: DenseTableProps) => {
+  // const scmIntegrationsApi = useApi(scmIntegrationsApiRef);
+
   const columns: TableColumn[] = [
+    { title: 'Subject', field: 'subject' },
+    // { title: 'Owner', field: 'owner' },
     { title: 'Project', field: 'project' },
     { title: 'Branch', field: 'branch' },
+    { title: 'Updated', field: 'updated' },
+    { title: 'Status', field: 'status' },
     { title: 'Change Id', field: 'change_id' },
   ];
 
   const data = changes.map(change => {
     return {
+      subject: change.subject,
+      // owner: change.owner,
       project: change.project,
       branch: change.branch,
+      updated: change.updated,
+      status: change.status,
       change_id: change.change_id,
     };
   });
@@ -118,7 +94,6 @@ const GerritProxyComponent = () => {
   const proxyBackendBaseUrl = discoveryApi.getBaseUrl('proxy');
   const { entity } = useEntity();
   const repoName = entity?.metadata?.name;
-
   const { value, loading, error } = useAsync(async (): Promise<Change[]> => {
     const response = await fetch(
       `${await proxyBackendBaseUrl}/gerrit/changes/?q=project:${repoName}`,
@@ -133,14 +108,13 @@ const GerritProxyComponent = () => {
   } else if (error) {
     return <Alert severity="error">{error.message}</Alert>;
   }
-
   return <DenseTable changes={value || []} />;
 };
 
 export const ExampleComponent = () => (
   <Page themeId="tool">
     <Header title="Welcome to gerrit Page!" subtitle="Optional subtitle">
-      <HeaderLabel label="Owner" value="Jim" />
+      <HeaderLabel label="repoName" value="Jim" />
       <HeaderLabel label="Lifecycle" value="Alpha" />
     </Header>
     <Content>
