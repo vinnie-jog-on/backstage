@@ -23,38 +23,49 @@ import {
   HeaderLabel,
   SupportButton,
   Progress,
-  Table,
   TableColumn,
+  Table,
 } from '@backstage/core-components';
 import { discoveryApiRef, useApi } from '@backstage/core-plugin-api';
 import { Alert } from '@material-ui/lab';
+import { makeStyles } from '@material-ui/core/styles';
 import useAsync from 'react-use/lib/useAsync';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { parseGerritJsonResponse } from '@backstage/integration';
 
+const useStyles = makeStyles({
+  link: {
+    textDecoration: 'underline',
+    fontSize: '16px',
+    lineHeight: '27px',
+    color: 'blue',
+    '&:hover, &:focus': {
+      fontWeight: '500',
+    },
+  },
+});
+
 type Change = {
   subject: string;
-  // owner: string;
+  owner: string;
   project: string;
   branch: string;
   updated: string;
   status: string;
   change_id: string;
+  _number: string;
 };
 
 type DenseTableProps = {
   changes: Change[];
 };
 
-// const { entity } = useEntity();
-// const repoName = entity?.metadata?.name;
-// , url: "http://localhost:8080/c/repo1/+/42"
 export const DenseTable = ({ changes }: DenseTableProps) => {
-  // const scmIntegrationsApi = useApi(scmIntegrationsApiRef);
+  const classes = useStyles();
 
   const columns: TableColumn[] = [
     { title: 'Subject', field: 'subject' },
-    // { title: 'Owner', field: 'owner' },
+    { title: 'Owner', field: 'owner._account_id' },
     { title: 'Project', field: 'project' },
     { title: 'Branch', field: 'branch' },
     { title: 'Updated', field: 'updated' },
@@ -64,11 +75,27 @@ export const DenseTable = ({ changes }: DenseTableProps) => {
 
   const data = changes.map(change => {
     return {
-      subject: change.subject,
-      // owner: change.owner,
+      subject: (
+        <a
+          href={`http://localhost:8080/c/${change.project}/+/${change._number}`}
+          target="_blank"
+          className={classes.link}
+        >
+          {change.subject}
+        </a>
+      ),
       project: change.project,
-      branch: change.branch,
-      updated: change.updated,
+      branch: (
+        <a
+          href={`http://localhost:8080/plugins/gitiles/${change.project}/+/refs/heads/${change.branch}`}
+          target="_blank"
+          className={classes.link}
+        >
+          {change.branch}
+        </a>
+      ),
+      updated: change.updated.split('.')[0],
+      owner: change.owner,
       status: change.status,
       change_id: change.change_id,
     };
@@ -76,7 +103,7 @@ export const DenseTable = ({ changes }: DenseTableProps) => {
 
   return (
     <Table
-      title="Example change List (fetching data from local gerrit)"
+      title="Gerrit reviews on repo"
       options={{ search: false, paging: false }}
       columns={columns}
       data={data}
@@ -94,7 +121,7 @@ const GerritProxyComponent = () => {
       `${await proxyBackendBaseUrl}/gerrit/changes/?q=project:${repoName}`,
     );
     const data = { results: await parseGerritJsonResponse(response as any) };
-    // console.log(entity?.metadata?.name)
+    // console.log(data.results)
     return data.results;
   }, []);
 
@@ -108,7 +135,7 @@ const GerritProxyComponent = () => {
 
 export const GerritComponent = () => (
   <Page themeId="tool">
-    <Header title="Welcome to gerrit Page!" subtitle="Optional subtitle">
+    <Header title="Gerrit Page!" subtitle="Optional subtitle">
       <HeaderLabel label="Repo Name" value="Alpha" url="https://google.com" />
       <HeaderLabel label="Lifecycle" value="Alpha" />
     </Header>

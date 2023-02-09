@@ -541,6 +541,10 @@ const websiteEntityPage = (
       {overviewContent}
     </EntityLayout.Route>
 
+    <EntityLayout.Route path="/gerrit" title="Gerrit">
+      {gerritContent}
+    </EntityLayout.Route>
+
     <EntityLayout.Route path="/ci-cd" title="CI/CD">
       {cicdContent}
     </EntityLayout.Route>
@@ -599,10 +603,6 @@ const websiteEntityPage = (
     {/* <EntityLayout.Route path="/pull-requests" title="Pull Requests">
       {pullRequestsContent}
     </EntityLayout.Route> */}
-
-    <EntityLayout.Route path="/pull-requests" title="Gerrit">
-      {gerritContent}
-    </EntityLayout.Route>
 
     <EntityLayout.Route path="/code-insights" title="Code Insights">
       <EntityGithubInsightsContent />
