@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import {
   Header,
   Page,
@@ -25,6 +25,7 @@ import {
   Progress,
   TableColumn,
   Table,
+  InfoCard,
 } from '@backstage/core-components';
 import { discoveryApiRef, useApi } from '@backstage/core-plugin-api';
 import { Alert } from '@material-ui/lab';
@@ -60,6 +61,30 @@ type DenseTableProps = {
   changes: Change[];
 };
 
+export default function GerritUser(userid: string): string | any {
+  //   curl http://localhost:8080/accounts/1000000
+  // )]}'
+  // {"_account_id":1000000,"name":"Administrator","email":"admin@example.com","username":"admin","avatars":[{"url":"http://www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61.jpg?d\u003didenticon\u0026r\u003dpg\u0026s\u003d32","height":32},{"url":"http://www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61.jpg?d\u003didenticon\u0026r\u003dpg\u0026s\u003d56","height":56},{"url":"http://www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61.jpg?d\u003didenticon\u0026r\u003dpg\u0026s\u003d100","height":100},{"url":"http://www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61.jpg?d\u003didenticon\u0026r\u003dpg\u0026s\u003d120","height":120}]}
+  // let userid1 = { userid: userid }
+
+  const discoveryApi = useApi(discoveryApiRef);
+  const proxyBackendBaseUrl = discoveryApi.getBaseUrl('proxy');
+  const { value, loading, error } = useAsync(async () => {
+    const response = await fetch(
+      `${await proxyBackendBaseUrl}/gerrit/accounts/${userid}/username`,
+    );
+    const data = await response.text();
+    const trimmed = data.substring(4);
+    return trimmed;
+  }, []);
+  if (loading) {
+    return <Progress />;
+  } else if (error) {
+    return <Alert severity="error">{error.message}</Alert>;
+  }
+  return value || '';
+}
+
 export const DenseTable = ({ changes }: DenseTableProps) => {
   const classes = useStyles();
 
@@ -74,6 +99,13 @@ export const DenseTable = ({ changes }: DenseTableProps) => {
   ];
 
   const data = changes.map(change => {
+    // console.log("Step 1");
+    // const userid: string = change.owner
+    // const user = GerritUser(JSON.stringify(change.owner._account_id));
+    // console.log("Step 2");
+    // console.log(user);
+    // console.log("Step_3");
+
     return {
       subject: (
         <a
@@ -96,6 +128,15 @@ export const DenseTable = ({ changes }: DenseTableProps) => {
       ),
       updated: change.updated.split('.')[0],
       owner: change.owner,
+      // owner: (
+      //   <a
+      //     href={`http://localhost:8080/q/owner:admin`}
+      //     target="_blank"
+      //     className={classes.link}
+      //   >
+      //     {change.owner}
+      //   </a>
+      // ),
       status: change.status,
       change_id: change.change_id,
     };
@@ -115,13 +156,14 @@ const GerritProxyComponent = () => {
   const discoveryApi = useApi(discoveryApiRef);
   const proxyBackendBaseUrl = discoveryApi.getBaseUrl('proxy');
   const { entity } = useEntity();
-  const repoName = entity?.metadata?.name;
+  // const repoName = entity?.metadata?.name;
   const { value, loading, error } = useAsync(async (): Promise<Change[]> => {
     const response = await fetch(
-      `${await proxyBackendBaseUrl}/gerrit/changes/?q=project:${repoName}`,
+      `${await proxyBackendBaseUrl}/gerrit/changes/?q=project:${
+        entity?.metadata?.name
+      }`,
     );
     const data = { results: await parseGerritJsonResponse(response as any) };
-    // console.log(data.results)
     return data.results;
   }, []);
 
@@ -144,13 +186,14 @@ export const GerritComponent = () => (
         <SupportButton>Provides a link to gerrit changes.</SupportButton>
       </ContentHeader>
       <Grid container spacing={3} direction="column">
-        {/* <Grid item>
+        <Grid item>
           <InfoCard title="Information card">
             <Typography variant="body1">
               I really should add something here.
+              {/* <GerritUser("1000001") /> */}
             </Typography>
           </InfoCard>
-        </Grid> */}
+        </Grid>
         <Grid item>
           <GerritProxyComponent />
         </Grid>
